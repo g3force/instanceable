@@ -27,8 +27,8 @@
 
 		<dependency>
 			<groupId>com.github.g3force</groupId>
-			<artifactId>s2vconverter</artifactId>
-			<version>1.0</version>
+			<artifactId>String2ValueConverter</artifactId>
+			<version>v1.0</version>
 		</dependency>
 
 	</dependencies>
