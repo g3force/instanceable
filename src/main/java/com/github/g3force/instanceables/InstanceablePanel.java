@@ -46,10 +46,10 @@ public class InstanceablePanel extends JPanel
 	private final List<JComponent>					inputFields			= new ArrayList<>();
 	private JButton										btnCreate			= null;
 	private final List<IInstanceableObserver>		observers			= new CopyOnWriteArrayList<IInstanceableObserver>();
-	
+																						
 	private final Properties							prop;
-	
-	
+																
+																
 	/**
 	 * @param instanceableEnums
 	 */
@@ -159,7 +159,10 @@ public class InstanceablePanel extends JPanel
 	{
 		cbbInstances.setEnabled(enabled);
 		inputPanel.setEnabled(enabled);
-		btnCreate.setEnabled(enabled);
+		if (btnCreate != null)
+		{
+			btnCreate.setEnabled(enabled);
+		}
 	}
 	
 	
