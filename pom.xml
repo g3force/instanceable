@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.g3force</groupId>
 	<artifactId>instanceables</artifactId>
-	<version>v1.2</version>
+	<version>v1.3</version>
 	<name>instanceables</name>
 
 	<properties>
@@ -28,7 +28,7 @@
 		<dependency>
 			<groupId>com.github.g3force</groupId>
 			<artifactId>String2ValueConverter</artifactId>
-			<version>v1.5</version>
+			<version>v1.6</version>
 		</dependency>
 
 	</dependencies>
