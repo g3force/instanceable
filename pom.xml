@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.g3force</groupId>
 	<artifactId>instanceables</artifactId>
-	<version>v1.3</version>
+	<version>2.0</version>
 	<name>instanceables</name>
 
 	<properties>
