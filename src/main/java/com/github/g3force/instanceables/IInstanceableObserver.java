@@ -10,13 +10,8 @@ package com.github.g3force.instanceables;
 
 /**
  * Observer interface to get notified about new instances
- * 
- * @author Nicolai Ommer <nicolai.ommer@gmail.com>
  */
 public interface IInstanceableObserver
 {
-	/**
-	 * @param object
-	 */
 	void onNewInstance(Object object);
 }

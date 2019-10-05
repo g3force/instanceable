@@ -16,25 +16,17 @@ import com.github.g3force.s2vconverter.String2ValueConverter;
 
 /**
  * Parameter of a {@link InstanceableClass}.
- * 
- * @author Nicolai Ommer <nicolai.ommer@gmail.com>
  */
 public class InstanceableParameter
 {
-	private static String2ValueConverter	s2vConv	= String2ValueConverter.getDefault();
-																	
-	private final Class<?>						impl;
-	private final String							description;
-	private final String							defaultValue;
-	private final List<Class<?>>				genericsImpls;
-														
-														
-	/**
-	 * @param impl
-	 * @param description
-	 * @param defaultValue
-	 * @param genericsImpls
-	 */
+	private static String2ValueConverter s2vConv = String2ValueConverter.getDefault();
+
+	private final Class<?> impl;
+	private final String description;
+	private final String defaultValue;
+	private final List<Class<?>> genericsImpls;
+
+
 	public InstanceableParameter(final Class<?> impl, final String description, final String defaultValue,
 			final Class<?>... genericsImpls)
 	{
@@ -43,11 +35,11 @@ public class InstanceableParameter
 		this.defaultValue = defaultValue;
 		this.genericsImpls = Arrays.asList(genericsImpls);
 	}
-	
-	
+
+
 	/**
 	 * Parse given String to value
-	 * 
+	 *
 	 * @param value
 	 * @return
 	 */
@@ -59,8 +51,8 @@ public class InstanceableParameter
 		}
 		return s2vConv.parseString(impl, genericsImpls, value);
 	}
-	
-	
+
+
 	/**
 	 * @return the impl
 	 */
@@ -68,8 +60,8 @@ public class InstanceableParameter
 	{
 		return impl;
 	}
-	
-	
+
+
 	/**
 	 * @return the description
 	 */
@@ -77,8 +69,8 @@ public class InstanceableParameter
 	{
 		return description;
 	}
-	
-	
+
+
 	/**
 	 * @return the defaultValue
 	 */
@@ -86,8 +78,8 @@ public class InstanceableParameter
 	{
 		return defaultValue;
 	}
-	
-	
+
+
 	/**
 	 * @return the genericsImpls
 	 */
