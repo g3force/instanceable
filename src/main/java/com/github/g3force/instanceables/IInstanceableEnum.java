@@ -10,19 +10,11 @@ package com.github.g3force.instanceables;
 
 /**
  * Implement this in an enum that provides {@link InstanceableClass}s
- * 
- * @author Nicolai Ommer <nicolai.ommer@gmail.com>
  */
 public interface IInstanceableEnum
 {
-	/**
-	 * @return
-	 */
 	InstanceableClass getInstanceableClass();
-	
-	
-	/**
-	 * @return
-	 */
+
+
 	String name();
 }

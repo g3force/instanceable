@@ -5,18 +5,13 @@ import java.util.Set;
 
 
 /**
- * @author Nicolai Ommer <nicolai.ommer@gmail.com>
+ * Utility class for this lib.
  */
 public class InstanceableUtil
 {
-	/**
-	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
-	 * @param enumClazz
-	 * @return
-	 */
 	public static Set<Class<?>> getAllClasses(final Class<? extends Enum<? extends IInstanceableEnum>> enumClazz)
 	{
-		Set<Class<?>> classes = new LinkedHashSet<Class<?>>();
+		Set<Class<?>> classes = new LinkedHashSet<>();
 		Enum<? extends IInstanceableEnum> values[] = enumClazz.getEnumConstants();
 		IInstanceableEnum valInstancable[] = (IInstanceableEnum[]) values;
 		for (IInstanceableEnum en : valInstancable)
@@ -35,17 +30,11 @@ public class InstanceableUtil
 		}
 		return classes;
 	}
-	
-	
-	/**
-	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
-	 * @param classes1
-	 * @param classes2
-	 * @return
-	 */
+
+
 	public static Set<Class<?>> mergeClasses(final Set<Class<?>> classes1, final Set<Class<?>> classes2)
 	{
-		Set<Class<?>> classes = new LinkedHashSet<Class<?>>();
+		Set<Class<?>> classes = new LinkedHashSet<>();
 		classes.addAll(classes1);
 		classes.addAll(classes2);
 		return classes;

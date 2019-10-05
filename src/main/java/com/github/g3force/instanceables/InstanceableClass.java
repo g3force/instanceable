@@ -9,7 +9,6 @@
 package com.github.g3force.instanceables;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -17,40 +16,23 @@ import java.util.List;
 
 /**
  * An {@link InstanceableClass} can be used to create an object from a class and a set of parameters.
- * 
- * @author Nicolai Ommer <nicolai.ommer@gmail.com>
  */
 public class InstanceableClass
 {
-	// --------------------------------------------------------------------------
-	// --- variables and constants ----------------------------------------------
-	// --------------------------------------------------------------------------
-	private final Class<?>							impl;
-	private final List<InstanceableParameter>	params;
-	
-	
-	// --------------------------------------------------------------------------
-	// --- constructors ---------------------------------------------------------
-	// --------------------------------------------------------------------------
-	
-	/**
-	 * @param impl
-	 * @param params
-	 */
+	private final Class<?> impl;
+	private final List<InstanceableParameter> params;
+
+
 	public InstanceableClass(final Class<?> impl, final InstanceableParameter... params)
 	{
 		this.impl = impl;
 		this.params = Arrays.asList(params);
 	}
-	
-	
-	// --------------------------------------------------------------------------
-	// --- methods --------------------------------------------------------------
-	// --------------------------------------------------------------------------
-	
+
+
 	/**
 	 * Create a new instance with the specified arguments
-	 * 
+	 *
 	 * @param args
 	 * @return
 	 * @throws NotCreateableException
@@ -62,35 +44,20 @@ public class InstanceableClass
 		{
 			Constructor<?> con = getConstructor();
 			result = con.newInstance(args);
-		} catch (final SecurityException err)
-		{
-			throw new NotCreateableException("", err);
-		} catch (final InstantiationException err)
-		{
-			throw new NotCreateableException("", err);
-		} catch (final IllegalAccessException err)
-		{
-			throw new NotCreateableException("", err);
-		} catch (final IllegalArgumentException err)
-		{
-			throw new NotCreateableException("", err);
-		} catch (final InvocationTargetException err)
-		{
-			throw new NotCreateableException("", err);
-		} catch (final IllegalStateException err)
-		{
-			throw new NotCreateableException("", err);
 		} catch (NoSuchMethodException err)
 		{
 			throw new NotCreateableException("Wrong constructor types.", err);
+		} catch (final Exception err)
+		{
+			throw new NotCreateableException("Can not create instance", err);
 		}
 		return result;
 	}
-	
-	
+
+
 	/**
 	 * Create a new instance with default parameters (as defined in enum)
-	 * 
+	 *
 	 * @return
 	 * @throws NotCreateableException
 	 */
@@ -100,7 +67,7 @@ public class InstanceableClass
 		{
 			return newInstance();
 		}
-		List<Object> objParams = new ArrayList<Object>(getParams().size());
+		List<Object> objParams = new ArrayList<>(getParams().size());
 		for (InstanceableParameter param : getParams())
 		{
 			Object objParam = param.parseString(param.getDefaultValue());
@@ -108,42 +75,33 @@ public class InstanceableClass
 		}
 		return newInstance(objParams.toArray());
 	}
-	
-	
+
+
 	/**
 	 * Add parameter
-	 * 
+	 *
 	 * @param param
 	 */
 	public void addParam(final InstanceableParameter param)
 	{
 		params.add(param);
 	}
-	
-	
-	// --------------------------------------------------------------------------
-	// --- getter/setter --------------------------------------------------------
-	// --------------------------------------------------------------------------
-	
-	
+
+
 	/**
 	 * Returns the first public constructor of the Play.
-	 * 
-	 * @return
-	 * @throws NoSuchMethodException
-	 * @throws SecurityException
 	 */
 	public Constructor<?> getConstructor() throws NoSuchMethodException
 	{
-		Class<?> paramTypes[] = new Class<?>[params.size()];
+		Class<?>[] paramTypes = new Class<?>[params.size()];
 		for (int i = 0; i < params.size(); i++)
 		{
 			paramTypes[i] = params.get(i).getImpl();
 		}
 		return impl.getConstructor(paramTypes);
 	}
-	
-	
+
+
 	/**
 	 * @return the params
 	 */
@@ -151,28 +109,20 @@ public class InstanceableClass
 	{
 		return params;
 	}
-	
-	
-	/**
-	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
-	 */
+
+
 	public static class NotCreateableException extends Exception
 	{
-		/**  */
-		private static final long	serialVersionUID	= 89775383135278930L;
-		
-		
-		/**
-		 * @param message
-		 * @param cause
-		 */
+		private static final long serialVersionUID = 89775383135278930L;
+
+
 		public NotCreateableException(final String message, final Throwable cause)
 		{
 			super(message, cause);
 		}
 	}
-	
-	
+
+
 	/**
 	 * @return the impl
 	 */
