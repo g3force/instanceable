@@ -18,7 +18,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.*;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.github.g3force.instanceables.InstanceableClass.NotCreateableException;
 
@@ -29,8 +30,7 @@ import com.github.g3force.instanceables.InstanceableClass.NotCreateableException
 public class InstanceablePanel extends JPanel
 {
 	private static final long serialVersionUID = -6272636064374504265L;
-	private static final Logger log = Logger.getLogger(InstanceablePanel.class
-			.getName());
+	private static final Logger log = LogManager.getLogger(InstanceablePanel.class.getName());
 	private final JComboBox<IInstanceableEnum> cbbInstances;
 	private final JPanel inputPanel;
 	private final List<JComponent> inputFields = new ArrayList<>();
