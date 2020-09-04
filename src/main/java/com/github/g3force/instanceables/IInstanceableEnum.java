@@ -13,8 +13,14 @@ package com.github.g3force.instanceables;
  */
 public interface IInstanceableEnum
 {
-	InstanceableClass getInstanceableClass();
+	 InstanceableClass getInstanceableClass();
 
 
-	String name();
+	 String name();
+
+
+	 default IInstanceableEnum parse(String value)
+	 {
+		  return null;
+	 }
 }

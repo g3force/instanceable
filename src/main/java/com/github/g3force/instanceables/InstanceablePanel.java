@@ -8,20 +8,25 @@
  */
 package com.github.g3force.instanceables;
 
-import java.awt.*;
+import com.github.g3force.instanceables.InstanceableClass.NotCreateableException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import javax.swing.*;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import com.github.g3force.instanceables.InstanceableClass.NotCreateableException;
 
 
 /**
@@ -31,6 +36,7 @@ public class InstanceablePanel extends JPanel
 {
 	private static final long serialVersionUID = -6272636064374504265L;
 	private static final Logger log = LogManager.getLogger(InstanceablePanel.class.getName());
+	private static final String DEFAULT_SELECTION = "default";
 	private final JComboBox<IInstanceableEnum> cbbInstances;
 	private final JPanel inputPanel;
 	private final List<JComponent> inputFields = new ArrayList<>();
@@ -55,11 +61,16 @@ public class InstanceablePanel extends JPanel
 		inputPanel = new JPanel();
 		inputPanel.setLayout(new GridLayout(0, 2));
 
-		cbbInstAl.actionPerformed(null);
-
 		setLayout(new BorderLayout());
 		add(cbbInstances, BorderLayout.NORTH);
 		add(inputPanel, BorderLayout.CENTER);
+
+		if(instanceableEnums.length > 0)
+		{
+			 loadDefaultValue(instanceableEnums[0]);
+		}
+
+		 cbbInstAl.actionPerformed(null);
 	}
 
 
@@ -133,23 +144,51 @@ public class InstanceablePanel extends JPanel
 	}
 
 
-	private String getModelKey(final IInstanceableEnum instance, final InstanceableParameter param)
+	private String getModelParameterKey(final IInstanceableEnum instance, final InstanceableParameter param)
 	{
 		return instance.getClass().getCanonicalName() + "." + instance.name() + "." + param.getDescription();
 	}
 
 
+	 private String getModelDefaultSelectionKey(final IInstanceableEnum instance)
+	 {
+		  return instance.getClass().getCanonicalName() + "." + DEFAULT_SELECTION;
+	 }
+
+
 	private String loadParamValue(final IInstanceableEnum instance, final InstanceableParameter param)
 	{
-		return prop.getProperty(getModelKey(instance, param), param.getDefaultValue());
+		return prop.getProperty(getModelParameterKey(instance, param), param.getDefaultValue());
 	}
 
 
 	private void saveParamValue(final IInstanceableEnum instance, final InstanceableParameter param, final String value)
 	{
-		prop.setProperty(getModelKey(instance, param), value);
+		prop.setProperty(getModelParameterKey(instance, param), value);
 	}
 
+
+	 private void loadDefaultValue(final IInstanceableEnum instance)
+	 {
+		  String value = prop.getProperty(getModelDefaultSelectionKey(instance));
+		  if (value != null)
+		  {
+				try
+				{
+					 IInstanceableEnum instanceableEnum = instance.parse(value);
+					 cbbInstances.setSelectedItem(instanceableEnum);
+				} catch (IllegalArgumentException e)
+				{
+					 log.debug("Could not parse enum value: {}", value);
+				}
+		  }
+	 }
+
+
+	 private void saveDefaultValue(final IInstanceableEnum instance, final String value)
+	 {
+		  prop.setProperty(getModelDefaultSelectionKey(instance), value);
+	 }
 
 	private class CbbInstancesActionListener implements ActionListener
 	{
@@ -190,6 +229,7 @@ public class InstanceablePanel extends JPanel
 				inputPanel.add(comp);
 				inputFields.add(comp);
 			}
+			saveDefaultValue(instance, instance.name());
 			updateUI();
 		}
 	}
