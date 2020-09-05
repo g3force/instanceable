@@ -66,7 +66,7 @@ public class InstanceableClass<T>
 
 
     public InstanceableClass<T> ctorParam(
-        final Class<T> impl,
+        final Class<?> impl,
         final String description,
         final String defaultValue,
         final Class<?>... genericsImpls
