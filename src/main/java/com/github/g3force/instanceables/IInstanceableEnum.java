@@ -13,14 +13,26 @@ package com.github.g3force.instanceables;
  */
 public interface IInstanceableEnum
 {
-	 InstanceableClass getInstanceableClass();
+    /**
+     * @return the instance class of the enum value
+     */
+    InstanceableClass getInstanceableClass();
 
 
-	 String name();
+    /**
+     * @return the name of the enum value (implemented by {@link Enum})
+     */
+    String name();
 
 
-	 default IInstanceableEnum parse(String value)
-	 {
-		  return null;
-	 }
+    /**
+     * Parse the given enum name to an enum instance of this enum type ({@link Enum#valueOf(Class, String)})
+     *
+     * @param name the name of the enum value
+     * @return the respective enum instance
+     */
+    default IInstanceableEnum parse(String name)
+    {
+        return null;
+    }
 }

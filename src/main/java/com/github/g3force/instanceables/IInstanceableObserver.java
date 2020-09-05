@@ -13,5 +13,8 @@ package com.github.g3force.instanceables;
  */
 public interface IInstanceableObserver
 {
-	void onNewInstance(Object object);
+    /**
+     * @param object the object that was created
+     */
+    void onNewInstance(Object object);
 }

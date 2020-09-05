@@ -8,10 +8,10 @@
  */
 package com.github.g3force.instanceables;
 
+import com.github.g3force.s2vconverter.String2ValueConverter;
+
 import java.util.Arrays;
 import java.util.List;
-
-import com.github.g3force.s2vconverter.String2ValueConverter;
 
 
 /**
@@ -19,72 +19,72 @@ import com.github.g3force.s2vconverter.String2ValueConverter;
  */
 public class InstanceableParameter
 {
-	private static String2ValueConverter s2vConv = String2ValueConverter.getDefault();
+    private static final String2ValueConverter VALUE_CONVERTER = String2ValueConverter.getDefault();
 
-	private final Class<?> impl;
-	private final String description;
-	private final String defaultValue;
-	private final List<Class<?>> genericsImpls;
-
-
-	public InstanceableParameter(final Class<?> impl, final String description, final String defaultValue,
-			final Class<?>... genericsImpls)
-	{
-		this.impl = impl;
-		this.description = description;
-		this.defaultValue = defaultValue;
-		this.genericsImpls = Arrays.asList(genericsImpls);
-	}
+    private final Class<?> impl;
+    private final String description;
+    private final String defaultValue;
+    private final List<Class<?>> genericsImpls;
 
 
-	/**
-	 * Parse given String to value
-	 *
-	 * @param value
-	 * @return
-	 */
-	public Object parseString(final String value)
-	{
-		if (genericsImpls.isEmpty())
-		{
-			return s2vConv.parseString(impl, value);
-		}
-		return s2vConv.parseString(impl, genericsImpls, value);
-	}
+    public InstanceableParameter(final Class<?> impl, final String description, final String defaultValue,
+        final Class<?>... genericsImpls)
+    {
+        this.impl = impl;
+        this.description = description;
+        this.defaultValue = defaultValue;
+        this.genericsImpls = Arrays.asList(genericsImpls);
+    }
 
 
-	/**
-	 * @return the impl
-	 */
-	public final Class<?> getImpl()
-	{
-		return impl;
-	}
+    /**
+     * Parse given String to value
+     *
+     * @param value the value to be parsed
+     * @return the new instance
+     */
+    public Object parseString(final String value)
+    {
+        if (genericsImpls.isEmpty())
+        {
+            return VALUE_CONVERTER.parseString(impl, value);
+        }
+        return VALUE_CONVERTER.parseString(impl, genericsImpls, value);
+    }
 
 
-	/**
-	 * @return the description
-	 */
-	public final String getDescription()
-	{
-		return description;
-	}
+    /**
+     * @return the impl
+     */
+    public final Class<?> getImpl()
+    {
+        return impl;
+    }
 
 
-	/**
-	 * @return the defaultValue
-	 */
-	public final String getDefaultValue()
-	{
-		return defaultValue;
-	}
+    /**
+     * @return the description
+     */
+    public final String getDescription()
+    {
+        return description;
+    }
 
 
-	/**
-	 * @return the genericsImpls
-	 */
-	protected List<Class<?>> getGenericsImpls()
-	{
-		return genericsImpls;
-	}
+    /**
+     * @return the defaultValue
+     */
+    public final String getDefaultValue()
+    {
+        return defaultValue;
+    }
+
+
+    /**
+     * @return the genericsImpls
+     */
+    protected List<Class<?>> getGenericsImpls()
+    {
+        return genericsImpls;
+    }
 }
