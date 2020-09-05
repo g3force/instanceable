@@ -12,6 +12,7 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.BiConsumer;
 
 
 /**
@@ -44,6 +45,28 @@ public class InstanceableClass<T>
         return this;
     }
 
+    public <R> InstanceableClass<T> setterParam(
+        final Class<R> impl,
+        final String description,
+        final String defaultValue,
+        final BiConsumer<T, R> setter,
+        final Class<?>... genericsImpls
+    )
+    {
+        setterParams.add(new InstanceableSetter<>(impl, description, defaultValue, setter, genericsImpls));
+        return this;
+    }
+
+    public InstanceableClass<T> ctorParam(
+        final Class<T> impl,
+        final String description,
+        final String defaultValue,
+        final Class<?>... genericsImpls
+    )
+    {
+        ctorParams.add(new InstanceableParameter(impl, description, defaultValue, genericsImpls));
+        return this;
+    }
 
     /**
      * Create a new instance with the specified arguments
