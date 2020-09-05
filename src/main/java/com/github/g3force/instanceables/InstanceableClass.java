@@ -32,6 +32,12 @@ public class InstanceableClass<T>
     }
 
 
+    public static <T> InstanceableClass<T> ic(final Class<T> impl, final InstanceableParameter... ctorParams)
+    {
+        return new InstanceableClass<>(impl, ctorParams);
+    }
+
+
     public InstanceableClass<T> setterParam(final InstanceableSetter<?, T> setter)
     {
         setterParams.add(setter);
@@ -45,6 +51,7 @@ public class InstanceableClass<T>
         return this;
     }
 
+
     public <R> InstanceableClass<T> setterParam(
         final Class<R> impl,
         final String description,
@@ -57,6 +64,7 @@ public class InstanceableClass<T>
         return this;
     }
 
+
     public InstanceableClass<T> ctorParam(
         final Class<T> impl,
         final String description,
@@ -67,6 +75,7 @@ public class InstanceableClass<T>
         ctorParams.add(new InstanceableParameter(impl, description, defaultValue, genericsImpls));
         return this;
     }
+
 
     /**
      * Create a new instance with the specified arguments
