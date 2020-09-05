@@ -16,7 +16,7 @@ public interface IInstanceableEnum
     /**
      * @return the instance class of the enum value
      */
-    InstanceableClass getInstanceableClass();
+    InstanceableClass<?> getInstanceableClass();
 
 
     /**

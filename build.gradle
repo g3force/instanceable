@@ -13,7 +13,7 @@ repositories {
 
 dependencies {
     implementation 'org.apache.logging.log4j:log4j-api:2.12.1'
-    implementation 'com.github.g3force:String2ValueConverter:2.1'
+    implementation 'com.github.g3force:String2ValueConverter:2.2'
 }
 
 group = 'com.github.g3force'

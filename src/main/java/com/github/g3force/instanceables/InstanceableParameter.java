@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * Parameter of a {@link InstanceableClass}.
  */
-public class InstanceableParameter
+public class InstanceableParameter implements IInstanceableParameter
 {
     private static final String2ValueConverter VALUE_CONVERTER = String2ValueConverter.getDefault();
 
@@ -27,8 +27,12 @@ public class InstanceableParameter
     private final List<Class<?>> genericsImpls;
 
 
-    public InstanceableParameter(final Class<?> impl, final String description, final String defaultValue,
-        final Class<?>... genericsImpls)
+    public InstanceableParameter(
+        final Class<?> impl,
+        final String description,
+        final String defaultValue,
+        final Class<?>... genericsImpls
+    )
     {
         this.impl = impl;
         this.description = description;
@@ -43,6 +47,7 @@ public class InstanceableParameter
      * @param value the value to be parsed
      * @return the new instance
      */
+    @Override
     public Object parseString(final String value)
     {
         if (genericsImpls.isEmpty())
@@ -56,6 +61,7 @@ public class InstanceableParameter
     /**
      * @return the impl
      */
+    @Override
     public final Class<?> getImpl()
     {
         return impl;
@@ -65,6 +71,7 @@ public class InstanceableParameter
     /**
      * @return the description
      */
+    @Override
     public final String getDescription()
     {
         return description;
@@ -74,17 +81,9 @@ public class InstanceableParameter
     /**
      * @return the defaultValue
      */
+    @Override
     public final String getDefaultValue()
     {
         return defaultValue;
-    }
-
-
-    /**
-     * @return the genericsImpls
-     */
-    protected List<Class<?>> getGenericsImpls()
-    {
-        return genericsImpls;
     }
 }

@@ -8,7 +8,6 @@
  */
 package com.github.g3force.instanceables;
 
-import com.github.g3force.instanceables.InstanceableClass.NotCreateableException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -27,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 
 /**
@@ -144,7 +144,7 @@ public class InstanceablePanel extends JPanel
     }
 
 
-    private String getModelParameterKey(final IInstanceableEnum instance, final InstanceableParameter param)
+    private String getModelParameterKey(final IInstanceableEnum instance, final IInstanceableParameter param)
     {
         return instance.getClass().getCanonicalName() + "." + instance.name() + "." + param.getDescription();
     }
@@ -156,13 +156,8 @@ public class InstanceablePanel extends JPanel
     }
 
 
-    private String loadParamValue(final IInstanceableEnum instance, final InstanceableParameter param)
-    {
-        return prop.getProperty(getModelParameterKey(instance, param), param.getDefaultValue());
-    }
-
-
-    private void saveParamValue(final IInstanceableEnum instance, final InstanceableParameter param, final String value)
+    private void saveParamValue(final IInstanceableEnum instance, final IInstanceableParameter param,
+        final String value)
     {
         prop.setProperty(getModelParameterKey(instance, param), value);
     }
@@ -179,15 +174,9 @@ public class InstanceablePanel extends JPanel
                 cbbInstances.setSelectedItem(instanceableEnum);
             } catch (IllegalArgumentException e)
             {
-                log.debug("Could not parse enum value: {}", value);
+                log.debug("Could not parse enum value: {}", value, e);
             }
         }
-    }
-
-
-    private void saveDefaultValue(final IInstanceableEnum instance, final String value)
-    {
-        prop.setProperty(getModelDefaultSelectionKey(instance), value);
     }
 
 
@@ -198,39 +187,58 @@ public class InstanceablePanel extends JPanel
         public void actionPerformed(final ActionEvent e)
         {
             IInstanceableEnum instance = (IInstanceableEnum) cbbInstances.getSelectedItem();
+            if (instance == null)
+            {
+                return;
+            }
             inputPanel.removeAll();
             inputFields.clear();
-            for (InstanceableParameter param : instance.getInstanceableClass().getParams())
+            for (IInstanceableParameter param : instance.getInstanceableClass().getAllParams())
             {
-                inputPanel.add(new JLabel(param.getDescription()));
                 String value = loadParamValue(instance, param);
-                JComponent comp;
-                if (param.getImpl().isEnum())
-                {
-                    JComboBox<?> cb = new JComboBox<>(param.getImpl().getEnumConstants());
-                    comp = cb;
-                    for (int i = 0; i < cb.getItemCount(); i++)
-                    {
-                        if (cb.getItemAt(i).toString().equals(value))
-                        {
-                            cb.setSelectedIndex(i);
-                            break;
-                        }
-                    }
-                } else if (param.getImpl().equals(Boolean.class) || param.getImpl().equals(Boolean.TYPE))
-                {
-                    boolean bVal = Boolean.parseBoolean(value);
-                    comp = new JCheckBox("", bVal);
-                } else
-                {
-                    int size = value.length() + 2;
-                    comp = new JTextField(value, size);
-                }
+                JComponent comp = getComponent(param, value);
+                inputPanel.add(new JLabel(param.getDescription()));
                 inputPanel.add(comp);
                 inputFields.add(comp);
             }
             saveDefaultValue(instance, instance.name());
             updateUI();
+        }
+
+
+        private JComponent getComponent(final IInstanceableParameter param, final String value)
+        {
+            if (param.getImpl().isEnum())
+            {
+                JComboBox<?> cb = new JComboBox<>(param.getImpl().getEnumConstants());
+                for (int i = 0; i < cb.getItemCount(); i++)
+                {
+                    if (cb.getItemAt(i).toString().equals(value))
+                    {
+                        cb.setSelectedIndex(i);
+                        return cb;
+                    }
+                }
+                return cb;
+            } else if (param.getImpl().equals(Boolean.class) || param.getImpl().equals(Boolean.TYPE))
+            {
+                boolean bVal = Boolean.parseBoolean(value);
+                return new JCheckBox("", bVal);
+            }
+            int size = value.length() + 2;
+            return new JTextField(value, size);
+        }
+
+
+        private void saveDefaultValue(final IInstanceableEnum instance, final String value)
+        {
+            prop.setProperty(getModelDefaultSelectionKey(instance), value);
+        }
+
+
+        private String loadParamValue(final IInstanceableEnum instance, final IInstanceableParameter param)
+        {
+            return prop.getProperty(getModelParameterKey(instance, param), param.getDefaultValue());
         }
     }
 
@@ -248,45 +256,37 @@ public class InstanceablePanel extends JPanel
     public void createInstance()
     {
         IInstanceableEnum instanceName = (IInstanceableEnum) cbbInstances.getSelectedItem();
+        if (instanceName == null)
+        {
+            return;
+        }
+
+        List<String> params = inputFields.stream().map(this::getValue).collect(Collectors.toList());
         int i = 0;
-        List<Object> params = new ArrayList<>(instanceName.getInstanceableClass().getParams().size());
-        for (InstanceableParameter param : instanceName.getInstanceableClass().getParams())
+        for (IInstanceableParameter param : instanceName.getInstanceableClass().getAllParams())
         {
-            JComponent comp = inputFields.get(i);
-            if (comp.getClass().equals(JTextField.class))
-            {
-                JTextField textField = (JTextField) comp;
-                try
-                {
-                    Object value = param.parseString(textField.getText());
-                    saveParamValue(instanceName, param, textField.getText());
-                    params.add(value);
-                } catch (NumberFormatException err)
-                {
-                    log.error("Could not parse parameter: {}", textField.getText(), err);
-                    return;
-                }
-            } else if (comp.getClass().equals(JComboBox.class))
-            {
-                JComboBox<?> cb = (JComboBox<?>) comp;
-                params.add(cb.getSelectedItem());
-                saveParamValue(instanceName, param, cb.getSelectedItem().toString());
-            } else if (comp.getClass().equals(JCheckBox.class))
-            {
-                JCheckBox cb = (JCheckBox) comp;
-                params.add(cb.isSelected());
-                saveParamValue(instanceName, param, String.valueOf(cb.isSelected()));
-            }
-            i++;
+            saveParamValue(instanceName, param, params.get(i++));
         }
-        Object instance;
-        try
+        Object instance = instanceName.getInstanceableClass().newInstance(params);
+        notifyNewInstance(instance);
+    }
+
+
+    private String getValue(final JComponent comp)
+    {
+        if (comp.getClass().equals(JTextField.class))
         {
-            instance = instanceName.getInstanceableClass().newInstance(params.toArray());
-            notifyNewInstance(instance);
-        } catch (NotCreateableException err)
+            JTextField textField = (JTextField) comp;
+            return textField.getText();
+        } else if (comp.getClass().equals(JComboBox.class))
         {
-            log.error("Could not create instance: {}", instanceName, err);
+            JComboBox<?> cb = (JComboBox<?>) comp;
+            return String.valueOf(cb.getSelectedItem());
+        } else if (comp.getClass().equals(JCheckBox.class))
+        {
+            JCheckBox cb = (JCheckBox) comp;
+            return String.valueOf(cb.isSelected());
         }
+        throw new IllegalStateException("Unknown component class: " + comp.getClass());
     }
 }
